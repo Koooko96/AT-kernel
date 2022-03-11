@@ -1,3 +1,8 @@
+'''
+To use this script to visualization the detection results on COCO dataset, you have to 
+configurate "out_file" in "mmdet/apis/inference.py function show_result_pyplot" and "mmdet/core/visualization/image.py function imshow_det_bboxes"
+'''
+
 from mmdet.apis import init_detector, inference_detector, show_result_pyplot
 import os
 import torch

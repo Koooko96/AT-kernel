@@ -67,6 +67,7 @@ evaluation = dict(interval=1, metric='accuracy')
 
 # optimizer
 # change the lr of (batch size / 256) * 0.1
+# batch size is indicated in the name of this config file (512 = 128 per GPU x 4 GPU)
 optimizer = dict(
     type='SGD', lr=0.2, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
