@@ -3,6 +3,7 @@ import torch.nn as nn
 from ..builder import BACKBONES
 from mmcv.runner import BaseModule
 import einops
+from torch import einsum
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
     """3x3 convolution with padding"""
@@ -13,6 +14,51 @@ def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
 def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
+
+
+### Position ###
+def pair(x):
+    return (x, x) if not isinstance(x, tuple) else x
+
+def expand_dim(t, dim, k):
+    t = t.unsqueeze(dim = dim)
+    expand_shape = [-1] * len(t.shape)
+    expand_shape[dim] = k
+    return t.expand(*expand_shape)
+
+def relative_logits_1d(q, rel_k):
+    logits = einsum('b h x y d, r d -> b h x y r', q, rel_k)
+    logits = expand_dim(logits, dim = 5, k = logits.shape[4])
+    return logits
+
+class RelPosEmb(nn.Module):
+    def __init__(
+        self,
+        kernel_size,
+        dim_head
+    ):
+        super().__init__()
+        height, width = pair(kernel_size)
+        scale = dim_head ** -0.5
+        self.kernel_size = kernel_size
+        self.dim_head = dim_head
+        self.rel_height = nn.Parameter(torch.randn(height, dim_head) * scale)
+        self.rel_width = nn.Parameter(torch.randn(width, dim_head) * scale)
+
+    def forward(self, q):
+        'q: b out_channels group_channels H W'
+        b, out_channels, group_channels, h, w = q.shape
+
+        q = q.permute(0, 1, 3, 4, 2)
+        rel_logits_w = relative_logits_1d(q, self.rel_width)
+        rel_logits_w = rel_logits_w.permute(0, 1, 5, 4, 2, 3).contiguous().view(b, out_channels, -1, h, w)
+
+        rel_logits_h = relative_logits_1d(q, self.rel_height)
+        rel_logits_h = rel_logits_h.permute(0, 1, 4, 5, 2, 3).contiguous().view(b, out_channels, -1, h, w)
+        return rel_logits_w + rel_logits_h
+
+### Position ###
+
 
 class AT_kernel(nn.Module):
 
