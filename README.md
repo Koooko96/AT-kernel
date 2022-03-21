@@ -18,7 +18,7 @@ After then merge the the files under the mmclassification in this project into t
 
 If you want to implement on small size dataset within limited GPU resources, the tiny imagenet dataset can be downloaded in [CS231n_tinyimagenet](http://cs231n.stanford.edu/tiny-imagenet-200.zip)
 
-Remember to register the model'ResNet_ATkernel' and dataset'Tiny_ImageNet' in each corresponding __init__.py
+Remember to register the model'ResNet_ATkernel' and dataset'Tiny_ImageNet' in each corresponding `__init__.py`
 
 Remember to change the data path in config file
 
@@ -43,7 +43,7 @@ Install the mmdetection with the guidance of [mmdet](https://github.com/open-mml
 
 After then merge the the files under the mmdetection in this project into the official mmdetection. 
 
-Remember to register the model'ResNet_ATkernel' corresponding __init__.py
+Remember to register the model'ResNet_ATkernel' in corresponding `__init__.py`
 
 Remember to change the data path and imagenet-pretrained model path in config file
 

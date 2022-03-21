@@ -10,7 +10,7 @@ model = dict(
         group_channels=4,
         frozen_stages=1,
         resolution=224,
-        init_cfg=dict(type='Pretrained', checkpoint='To Be Fixed (checkpoints/at_0001_11_epoch_100.pth)')),
+        init_cfg=dict(type='Pretrained', checkpoint='To Be Fixed (checkpoints/R50_at_0001_11_imagenet.pth)')),
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
